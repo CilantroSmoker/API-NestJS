@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Categoria {
+  id          Int        @id @default(autoincrement())
+  nombre      String     @unique
+  descripcion String?
+  descuento   Float      @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  productos   Producto[]
+}
+
+model Proveedor {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  telefono  String?
+  email     String?    @unique
+  direccion String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  productos Producto[]
+}
+
+model Producto {
+  id            Int           @id @default(autoincrement())
+  nombre        String
+  descripcion   String?
+  precio        Float
+  stock         Int           @default(0)
+  stockMinimo   Int           @default(5)
+  descuento     Float         @default(0)
+  categoriaId   Int
+  proveedorId   Int
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  categoria     Categoria     @relation(fields: [categoriaId], references: [id])
+  proveedor     Proveedor     @relation(fields: [proveedorId], references: [id])
+  detalleVentas DetalleVenta[]
+  movimientos   Movimiento[]
+}
+
+model Venta {
+  id             Int           @id @default(autoincrement())
+  total          Float
+  descuentoTotal Float         @default(0)
+  createdAt      DateTime      @default(now())
+  detalles       DetalleVenta[]
+}
+
+model DetalleVenta {
+  id         Int      @id @default(autoincrement())
+  ventaId    Int
+  productoId Int
+  cantidad   Int
+  precioUnit Float
+  descuento  Float    @default(0)
+  subtotal   Float
+
+  venta      Venta    @relation(fields: [ventaId], references: [id])
+  producto   Producto @relation(fields: [productoId], references: [id])
+}
+
+model Movimiento {
+  id           Int            @id @default(autoincrement())
+  productoId   Int
+  tipo         TipoMovimiento
+  cantidad     Int
+  motivo       String?
+  stockAntes   Int
+  stockDespues Int
+  createdAt    DateTime       @default(now())
+
+  producto     Producto       @relation(fields: [productoId], references: [id])
+}
+
+enum TipoMovimiento {
+  ENTRADA
+  SALIDA
+  AJUSTE
+}
