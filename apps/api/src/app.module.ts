@@ -5,6 +5,8 @@ import { ProveedoresModule } from './proveedores/proveedores.module';
 import { ProductosModule } from './productos/productos.module';
 import { MovimientosModule } from './movimientos/movimientos.module';
 import { VentasModule } from './ventas/ventas.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -15,5 +17,7 @@ import { VentasModule } from './ventas/ventas.module';
     MovimientosModule,
     VentasModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
