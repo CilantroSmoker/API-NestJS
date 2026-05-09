@@ -30,6 +30,7 @@ model Proveedor {
 
 model Producto {
   id            Int           @id @default(autoincrement())
+  codigoBarra   String?       @unique
   nombre        String
   descripcion   String?
   precio        Float
@@ -45,6 +46,10 @@ model Producto {
   proveedor     Proveedor     @relation(fields: [proveedorId], references: [id])
   detalleVentas DetalleVenta[]
   movimientos   Movimiento[]
+
+  @@index([categoriaId])
+  @@index([precio])
+  @@index([stock])
 }
 
 model Venta {

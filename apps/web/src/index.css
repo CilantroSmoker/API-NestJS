@@ -166,6 +166,12 @@ textarea {
   color: var(--heading);
 }
 
+.page-subtitle {
+  margin-top: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
 /* BOTONES */
 .btn {
   padding: 0.5rem 1.2rem;
@@ -179,6 +185,12 @@ textarea {
 
 .btn:hover {
   transform: translateY(-1px);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
 }
 
 .btn-primary {
@@ -501,6 +513,12 @@ tr:hover td {
   font-size: 1rem;
 }
 
+.loading-inline {
+  padding: 0 0 1rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
 /* FILTROS */
 .filters {
   display: flex;
@@ -522,6 +540,16 @@ tr:hover td {
 .filters input[type='checkbox'] {
   width: auto;
   accent-color: var(--primary);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
 @media (max-width: 820px) {

@@ -11,7 +11,17 @@ interface Venta {
   detalles?: { productoId: number; cantidad: number; subtotal: number; producto?: { nombre: string } }[];
 }
 
-interface Producto { id: number; nombre: string; precio: number; stock: number; }
+interface Producto {
+  id: number;
+  codigoBarra?: string | null;
+  nombre: string;
+  precio: number;
+  stock: number;
+}
+
+interface ProductosResponse {
+  items: Producto[];
+}
 
 export default function Ventas() {
   const [ventas, setVentas] = useState<Venta[]>([]);
@@ -20,20 +30,60 @@ export default function Ventas() {
   const [showModal, setShowModal] = useState(false);
   const [detalles, setDetalles] = useState([{ productoId: 0, cantidad: 1 }]);
   const [error, setError] = useState('');
+  const [busquedaProducto, setBusquedaProducto] = useState('');
+  const [buscandoProductos, setBuscandoProductos] = useState(false);
+
+  const cargarProductos = async (busqueda = '', resetDetalle = false) => {
+    const params = new URLSearchParams({ limit: '100' });
+    const q = busqueda.trim();
+    if (q) params.set('q', q);
+
+    setBuscandoProductos(true);
+    try {
+      const response = await apiFetch<ProductosResponse>(`/productos?${params}`);
+      setProductos(response.items);
+      if (resetDetalle && response.items.length > 0) {
+        setDetalles([{ productoId: response.items[0].id, cantidad: 1 }]);
+      }
+    } finally {
+      setBuscandoProductos(false);
+    }
+  };
 
   const cargar = async () => {
-    setLoading(true);
-    const [vs, ps] = await Promise.all([
-      apiFetch<Venta[]>('/ventas'),
-      apiFetch<Producto[]>('/productos'),
-    ]);
-    setVentas(vs);
-    setProductos(ps);
-    if (ps.length > 0) setDetalles([{ productoId: ps[0].id, cantidad: 1 }]);
-    setLoading(false);
+    try {
+      setLoading(true);
+      setError('');
+      const [vs, ps] = await Promise.all([
+        apiFetch<Venta[]>('/ventas'),
+        apiFetch<ProductosResponse>('/productos?limit=100'),
+      ]);
+      setVentas(vs);
+      setProductos(ps.items);
+      if (ps.items.length > 0) setDetalles([{ productoId: ps.items[0].id, cantidad: 1 }]);
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { cargar(); }, []);
+
+  useEffect(() => {
+    if (!showModal) return;
+    const timer = window.setTimeout(() => {
+      cargarProductos(busquedaProducto).catch((e: any) => setError(e.message));
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [busquedaProducto, showModal]);
+
+  const abrirNuevaVenta = () => {
+    setError('');
+    setBusquedaProducto('');
+    setShowModal(true);
+    cargarProductos('', productos.length === 0).catch((e: any) => setError(e.message));
+  };
 
   const agregarDetalle = () => setDetalles([...detalles, { productoId: productos[0]?.id || 0, cantidad: 1 }]);
   const quitarDetalle = (i: number) => setDetalles(detalles.filter((_, idx) => idx !== i));
@@ -64,7 +114,7 @@ export default function Ventas() {
     <div className="page">
       <div className="page-header">
         <h2>Ventas</h2>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Nueva venta</button>
+        <button className="btn btn-primary" onClick={abrirNuevaVenta}>+ Nueva venta</button>
       </div>
 
       {error && <Alert message={error} onClose={() => setError('')} />}
@@ -101,6 +151,15 @@ export default function Ventas() {
       {showModal && (
         <Modal title="Nueva venta" onClose={() => setShowModal(false)}>
           {error && <div className="alert alert-error">{error}</div>}
+          <div className="form-group">
+            <label>Buscar producto</label>
+            <input
+              value={busquedaProducto}
+              onChange={e => setBusquedaProducto(e.target.value)}
+              placeholder="Nombre, codigo de barra o ID"
+            />
+          </div>
+          {buscandoProductos && <div className="loading loading-inline">Buscando productos...</div>}
           {detalles.map((d, i) => (
             <div key={i} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.8rem', alignItems: 'flex-end' }}>
               <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
@@ -110,7 +169,12 @@ export default function Ventas() {
                   copy[i].productoId = +e.target.value;
                   setDetalles(copy);
                 }}>
-                  {productos.map(p => <option key={p.id} value={p.id}>{p.nombre} (stock: {p.stock})</option>)}
+                  {productos.length === 0 && <option value={0}>Sin productos encontrados</option>}
+                  {productos.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.nombre} {p.codigoBarra ? `- ${p.codigoBarra}` : ''} (stock: {p.stock})
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>

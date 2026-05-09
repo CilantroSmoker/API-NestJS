@@ -23,12 +23,15 @@ function App() {
     <BrowserRouter>
       <Navbar darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />
       <Routes>
-        <Route path="/" element={<Navigate to="/productos" />} />
-        <Route path="/categorias" element={<Categorias />} />
-        <Route path="/proveedores" element={<Proveedores />} />
-        <Route path="/productos" element={<Productos />} />
-        <Route path="/movimientos" element={<Movimientos />} />
-        <Route path="/ventas" element={<Ventas />} />
+        <Route path="/" element={<Navigate to="/api/productos" replace />} />
+        <Route path="/api" element={<Productos />} />
+        <Route path="/api/categorias" element={<Categorias />} />
+        <Route path="/api/proveedores" element={<Proveedores />} />
+        <Route path="/api/producto" element={<Productos />} />
+        <Route path="/api/productos" element={<Productos />} />
+        <Route path="/api/movimientos" element={<Movimientos />} />
+        <Route path="/api/ventas" element={<Ventas />} />
+        <Route path="*" element={<Navigate to="/api/productos" replace />} />
       </Routes>
     </BrowserRouter>
   );

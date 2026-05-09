@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../api/client';
 import Modal from '../components/Modal';
+import Alert from '../components/Alert';
 
 interface Movimiento {
   id: number;
@@ -15,6 +16,10 @@ interface Movimiento {
 
 interface Producto { id: number; nombre: string; }
 
+interface ProductosResponse {
+  items: Producto[];
+}
+
 export default function Movimientos() {
   const [movimientos, setMovimientos] = useState<Movimiento[]>([]);
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -24,15 +29,21 @@ export default function Movimientos() {
   const [error, setError] = useState('');
 
   const cargar = async () => {
-    setLoading(true);
-    const [movs, prods] = await Promise.all([
-      apiFetch<Movimiento[]>('/movimientos'),
-      apiFetch<Producto[]>('/productos'),
-    ]);
-    setMovimientos(movs);
-    setProductos(prods);
-    if (prods.length > 0) setForm(f => ({ ...f, productoId: prods[0].id }));
-    setLoading(false);
+    try {
+      setLoading(true);
+      setError('');
+      const [movs, prods] = await Promise.all([
+        apiFetch<Movimiento[]>('/movimientos'),
+        apiFetch<ProductosResponse>('/productos?limit=100'),
+      ]);
+      setMovimientos(movs);
+      setProductos(prods.items);
+      if (prods.items.length > 0) setForm(f => ({ ...f, productoId: prods.items[0].id }));
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { cargar(); }, []);
@@ -60,6 +71,8 @@ export default function Movimientos() {
         <h2>Movimientos de Stock</h2>
         <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Nuevo movimiento</button>
       </div>
+
+      {error && <Alert message={error} onClose={() => setError('')} />}
 
       <div className="table-wrap">
         <table>

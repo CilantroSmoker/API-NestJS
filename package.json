@@ -1,0 +1,10 @@
+{
+  "name": "minimarket",
+  "private": true,
+  "scripts": {
+    "start:dev": "docker compose -f infra/docker-compose.yml up -d && pnpm -r --parallel --filter api --filter web run dev",
+    "dev": "pnpm run start:dev",
+    "db:up": "docker compose -f infra/docker-compose.yml up -d",
+    "db:seed": "pnpm --dir apps/api db:seed"
+  }
+}

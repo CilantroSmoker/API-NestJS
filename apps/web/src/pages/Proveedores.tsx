@@ -21,10 +21,16 @@ export default function Proveedores() {
   const [error, setError] = useState('');
 
   const cargar = async () => {
-    setLoading(true);
-    const data = await apiFetch<Proveedor[]>('/proveedores');
-    setProveedores(data);
-    setLoading(false);
+    try {
+      setLoading(true);
+      setError('');
+      const data = await apiFetch<Proveedor[]>('/proveedores');
+      setProveedores(data);
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { cargar(); }, []);

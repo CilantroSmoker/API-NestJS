@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { PrismaClient } from '../generated/prisma/client';
+import { Prisma, PrismaClient } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 @Injectable()
@@ -12,6 +12,10 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get venta() { return this.client.venta; }
   get detalleVenta() { return this.client.detalleVenta; }
   get movimiento() { return this.client.movimiento; }
+
+  async $queryRaw<T = unknown>(query: Prisma.Sql): Promise<T> {
+    return this.client.$queryRaw<T>(query);
+  }
 
   async $transaction<T>(fn: (tx: any) => Promise<T>): Promise<T> {
     return this.client.$transaction(fn);
