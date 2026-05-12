@@ -12,6 +12,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get venta() { return this.client.venta; }
   get detalleVenta() { return this.client.detalleVenta; }
   get movimiento() { return this.client.movimiento; }
+  get usuario() { return this.client.usuario; }
 
   async $queryRaw<T = unknown>(query: Prisma.Sql): Promise<T> {
     return this.client.$queryRaw<T>(query);

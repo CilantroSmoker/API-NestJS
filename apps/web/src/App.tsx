@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './auth/AuthContext';
 import Categorias from './pages/Categorias';
 import Proveedores from './pages/Proveedores';
 import Productos from './pages/Productos';
 import Movimientos from './pages/Movimientos';
 import Ventas from './pages/Ventas';
+import Login from './pages/Login';
+import Usuarios from './pages/Usuarios';
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -20,20 +24,24 @@ function App() {
   }, [darkMode]);
 
   return (
-    <BrowserRouter>
-      <Navbar darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />
-      <Routes>
-        <Route path="/" element={<Navigate to="/api/productos" replace />} />
-        <Route path="/api" element={<Productos />} />
-        <Route path="/api/categorias" element={<Categorias />} />
-        <Route path="/api/proveedores" element={<Proveedores />} />
-        <Route path="/api/producto" element={<Productos />} />
-        <Route path="/api/productos" element={<Productos />} />
-        <Route path="/api/movimientos" element={<Movimientos />} />
-        <Route path="/api/ventas" element={<Ventas />} />
-        <Route path="*" element={<Navigate to="/api/productos" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Navbar darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Navigate to="/api/productos" replace />} />
+          <Route path="/api" element={<ProtectedRoute><Productos /></ProtectedRoute>} />
+          <Route path="/api/categorias" element={<ProtectedRoute><Categorias /></ProtectedRoute>} />
+          <Route path="/api/proveedores" element={<ProtectedRoute><Proveedores /></ProtectedRoute>} />
+          <Route path="/api/producto" element={<ProtectedRoute><Productos /></ProtectedRoute>} />
+          <Route path="/api/productos" element={<ProtectedRoute><Productos /></ProtectedRoute>} />
+          <Route path="/api/movimientos" element={<ProtectedRoute><Movimientos /></ProtectedRoute>} />
+          <Route path="/api/ventas" element={<ProtectedRoute><Ventas /></ProtectedRoute>} />
+          <Route path="/api/usuarios" element={<ProtectedRoute roles={['SUPER_ADMIN']}><Usuarios /></ProtectedRoute>} />
+          <Route path="*" element={<Navigate to="/api/productos" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

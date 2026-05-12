@@ -146,6 +146,30 @@ textarea {
   transform: translateY(-1px);
 }
 
+.nav-user {
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.nav-logout {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.45rem 0.75rem;
+}
+
+.nav-logout:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
 /* LAYOUT */
 .page {
   max-width: 1100px;
@@ -170,6 +194,36 @@ textarea {
   margin-top: 0.25rem;
   color: var(--text-muted);
   font-size: 0.9rem;
+}
+
+.login-page {
+  min-height: calc(100vh - 60px);
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.login-panel {
+  width: min(100%, 380px);
+  background: var(--surface);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+.login-panel h1 {
+  color: var(--heading);
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.login-panel p {
+  color: var(--text-muted);
+  margin-bottom: 1.4rem;
+}
+
+.login-panel .btn {
+  width: 100%;
 }
 
 /* BOTONES */
@@ -261,6 +315,12 @@ textarea {
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 /* BADGE */
@@ -436,6 +496,18 @@ tr:hover td {
 .form-group input::placeholder,
 .filters input::placeholder {
   color: var(--text-muted);
+}
+
+.checkbox-field label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text);
+}
+
+.checkbox-field input {
+  width: auto;
+  accent-color: var(--primary);
 }
 
 /* ALERTA */

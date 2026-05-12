@@ -47,3 +47,8 @@ export type DetalleVenta = Prisma.DetalleVentaModel
  * 
  */
 export type Movimiento = Prisma.MovimientoModel
+/**
+ * Model Usuario
+ * 
+ */
+export type Usuario = Prisma.UsuarioModel

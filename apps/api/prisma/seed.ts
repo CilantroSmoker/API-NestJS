@@ -1,5 +1,6 @@
 import { config } from 'dotenv';
 import { resolve } from 'path';
+import { randomBytes, scryptSync } from 'crypto';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client';
 
@@ -86,6 +87,12 @@ function ean13(index: number) {
   return `${base}${checksum}`;
 }
 
+function hashPassword(password: string) {
+  const salt = randomBytes(16).toString('hex');
+  const derivedKey = scryptSync(password, salt, 64);
+  return `scrypt:${salt}:${derivedKey.toString('hex')}`;
+}
+
 async function limpiarDatos() {
   await prisma.detalleVenta.deleteMany();
   await prisma.venta.deleteMany();
@@ -95,7 +102,45 @@ async function limpiarDatos() {
   await prisma.categoria.deleteMany();
 }
 
+async function crearUsuariosBase() {
+  const usuarios = [
+    {
+      nombre: 'Super Admin',
+      email: 'superadmin@minimarket.local',
+      password: 'SuperAdmin123',
+      rol: 'SUPER_ADMIN' as const,
+    },
+    {
+      nombre: 'Admin',
+      email: 'admin@minimarket.local',
+      password: 'Admin123',
+      rol: 'ADMIN' as const,
+    },
+  ];
+
+  for (const usuario of usuarios) {
+    await prisma.usuario.upsert({
+      where: { email: usuario.email },
+      update: {
+        nombre: usuario.nombre,
+        rol: usuario.rol,
+        activo: true,
+      },
+      create: {
+        nombre: usuario.nombre,
+        email: usuario.email,
+        passwordHash: hashPassword(usuario.password),
+        rol: usuario.rol,
+        activo: true,
+      },
+    });
+  }
+}
+
 async function main() {
+  console.log('Creando usuarios base...');
+  await crearUsuariosBase();
+
   console.log('Limpiando datos existentes...');
   await limpiarDatos();
 

@@ -31,6 +31,9 @@ async function bootstrap() {
     .addTag('productos')
     .addTag('movimientos')
     .addTag('ventas')
+    .addTag('auth')
+    .addTag('usuarios')
+    .addBearerAuth()
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, swaggerDocument);

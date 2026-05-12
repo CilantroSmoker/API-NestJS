@@ -16,3 +16,11 @@ export const TipoMovimiento = {
 } as const
 
 export type TipoMovimiento = (typeof TipoMovimiento)[keyof typeof TipoMovimiento]
+
+
+export const RolUsuario = {
+  ADMIN: 'ADMIN',
+  SUPER_ADMIN: 'SUPER_ADMIN'
+} as const
+
+export type RolUsuario = (typeof RolUsuario)[keyof typeof RolUsuario]

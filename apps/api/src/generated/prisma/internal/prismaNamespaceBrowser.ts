@@ -56,7 +56,8 @@ export const ModelName = {
   Producto: 'Producto',
   Venta: 'Venta',
   DetalleVenta: 'DetalleVenta',
-  Movimiento: 'Movimiento'
+  Movimiento: 'Movimiento',
+  Usuario: 'Usuario'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -153,6 +154,20 @@ export const MovimientoScalarFieldEnum = {
 } as const
 
 export type MovimientoScalarFieldEnum = (typeof MovimientoScalarFieldEnum)[keyof typeof MovimientoScalarFieldEnum]
+
+
+export const UsuarioScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  email: 'email',
+  passwordHash: 'passwordHash',
+  rol: 'rol',
+  activo: 'activo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
 
 
 export const SortOrder = {

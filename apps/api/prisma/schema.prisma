@@ -86,8 +86,24 @@ model Movimiento {
   producto     Producto       @relation(fields: [productoId], references: [id])
 }
 
+model Usuario {
+  id           Int         @id @default(autoincrement())
+  nombre       String
+  email        String      @unique
+  passwordHash String
+  rol          RolUsuario  @default(ADMIN)
+  activo       Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
 enum TipoMovimiento {
   ENTRADA
   SALIDA
   AJUSTE
+}
+
+enum RolUsuario {
+  ADMIN
+  SUPER_ADMIN
 }
