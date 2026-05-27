@@ -1,0 +1,9 @@
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'MetodoPago') THEN
+    CREATE TYPE "MetodoPago" AS ENUM ('EFECTIVO', 'TARJETA', 'TRANSFERENCIA');
+  END IF;
+END $$;
+
+ALTER TABLE "Venta"
+  ADD COLUMN IF NOT EXISTS "metodoPago" "MetodoPago" NOT NULL DEFAULT 'EFECTIVO';
